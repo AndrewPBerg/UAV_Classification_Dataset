@@ -44,11 +44,11 @@ class FeatureExtractor:
         'validation': '🔍'
     }
     
-    def __init__(self, dataset_name: str):
-        self.dataset_name = dataset_name
+    def __init__(self, data_path: str):
+        self.data_path = data_path
         self.current_dir = Path(__file__).resolve().parent
-        # Point to the external dataset directory
-        self.datasets_dir = Path(r'C:\Users\Sidewinders\Desktop\CODE\UAV_Classification_repo\src\datasets') / dataset_name
+        # Use the provided dataset path directly
+        self.datasets_dir = Path(data_path)
         self.output_base_dir = self.current_dir  # Put feature dirs directly in spectrogram_dataset
         
         # Audio processing parameters
@@ -215,7 +215,7 @@ class FeatureExtractor:
     def run(self):
         """Main execution method."""
         start_time = datetime.now()
-        logger.info(f"{self.EMOJIS['start']} Starting feature extraction for dataset: {self.dataset_name}")
+        logger.info(f"{self.EMOJIS['start']} Starting feature extraction for dataset: {self.data_path}")
         logger.info(f"{self.EMOJIS['folder']} Dataset directory: {self.datasets_dir}")
         logger.info(f"{self.EMOJIS['folder']} Output directory: {self.output_base_dir}")
         
@@ -314,13 +314,13 @@ class FeatureExtractor:
 def main():
     """Main function to run feature extraction."""
     # You can modify this to change which dataset to process
-    # DATASET_NAME = 'UAV_Dataset_31'  # Change to 'UAV_Dataset_9' or other dataset names
-    DATASET_NAME = 'DJI_Neo'  # Change to 'UAV_Dataset_9' or other dataset names
+  
+    DATA_PATH = r'.\UAV_Classification_repo\src\datasets\UAV_Dataset_31'
     
-    logger.info(f"🎯 Target dataset: {DATASET_NAME}")
+    logger.info(f"🎯 Target dataset path: {DATA_PATH}")
     
     try:
-        extractor = FeatureExtractor(DATASET_NAME)
+        extractor = FeatureExtractor(DATA_PATH)
         extractor.run()
     except KeyboardInterrupt:
         logger.info(f"\n⏹️ Process interrupted by user")

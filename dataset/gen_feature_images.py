@@ -25,10 +25,10 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 class FeatureExtractor:
-    """Extract and save audio features (LFCC, Mel Spectrogram, MFCC, Spectrogram, Mel Filter Bank) as images."""
+    """Extract and save audio features (LFCC, Mel Spectrogram, MFCC, Spectrogram) as images."""
     
     # Feature type constants
-    FEATURE_TYPES = ['LFCC', 'MEL_SPECTROGRAM', 'MFCC', 'SPECTROGRAM', 'MEL_FILTER_BANK']
+    FEATURE_TYPES = ['LFCC', 'MEL_SPECTROGRAM', 'MFCC', 'SPECTROGRAM']
     
     # Progress emojis
     EMOJIS = {
@@ -101,16 +101,6 @@ class FeatureExtractor:
                 'hop_length': self.hop_length,
             }
         )
-        
-        # Create mel filter bank using torchaudio functional
-        self.mel_filter_bank = F.melscale_fbanks(
-            n_freqs=self.n_fft // 2 + 1,
-            f_min=0.0,
-            f_max=self.sampling_rate / 2.0,
-            n_mels=self.n_mels,
-            sample_rate=self.sampling_rate,
-            norm="slaney"
-        )
     
     def _get_existing_classes(self) -> Dict[str, Set[str]]:
         """Get already processed classes for each feature type."""
@@ -125,12 +115,6 @@ class FeatureExtractor:
                             existing[feature_type].add(class_dir.name)
         
         return existing
-    
-    def _compute_mel_filter_bank(self, waveform: torch.Tensor) -> torch.Tensor:
-        """Compute mel filter bank features using torchaudio functional."""
-        # For MEL_FILTER_BANK, we return the filter bank matrix itself, not applied to audio
-        # This matches the PyTorch documentation approach
-        return self.mel_filter_bank.T.unsqueeze(0)  # Add batch dimension for consistency
     
     def get_audio_files(self, root_dir: Path) -> List[Path]:
         """Get all audio files recursively."""
@@ -178,13 +162,6 @@ class FeatureExtractor:
             plt.title(f'Spectrogram - {audio_path.stem}')
             plt.ylabel('freq_bin')
             plt.xlabel('Time Frames')
-        elif feature_type == 'MEL_FILTER_BANK':
-            # Plot the mel filter bank matrix following PyTorch documentation approach
-            plt.imshow(feature_data[0].numpy(), aspect='auto', cmap='viridis')
-            plt.colorbar()
-            plt.title(f'Mel Filter Bank - {audio_path.stem}')
-            plt.ylabel('frequency bin')
-            plt.xlabel('mel bin')
         
         plt.tight_layout()
         
@@ -215,7 +192,6 @@ class FeatureExtractor:
             features['MFCC'] = self.mfcc_transform(waveform)
             features['LFCC'] = self.lfcc_transform(waveform)
             features['SPECTROGRAM'] = self.spectrogram_transform(waveform)
-            features['MEL_FILTER_BANK'] = self._compute_mel_filter_bank(waveform)
             
             # Save each feature type
             for feature_type, feature_data in features.items():

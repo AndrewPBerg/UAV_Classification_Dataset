@@ -22,7 +22,7 @@ Using `generate_spectrograms.py` take all of the input data and save into `.png`
 9. DJI Mavic 2 Pro
 
 
-### UAV 32 Class includes the following UAV Classes
+### UAV 31 Class includes the following UAV Classes
 1. Autel Evo II
 2. David Tricopter
 3. DJI Avata
@@ -56,6 +56,6 @@ Using `generate_spectrograms.py` take all of the input data and save into `.png`
 31. Yuneec Typhoon H Plus
 
 
-### Extra UAV Classes, not yet included in testing
+### Extra UAV Classes, not yet included in training data
 
 - DJI Neo
